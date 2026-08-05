@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(150)
+  password  String   @db.VarChar(255)
+  role      Role     @default(USER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  bookings  Booking[]
+  reviews   Review[]
+
+  @@map("users")
+}
+
+model Motorcycle {
+  id             Int      @id @default(autoincrement())
+  brand          String   @db.VarChar(100)
+  model          String   @db.VarChar(100)
+  year           Int
+  price          Decimal  @db.Decimal(10, 2)
+  engineCapacity Int      @map("engine_capacity") // cc
+  imageUrl       String?  @map("image_url") @db.VarChar(500)
+  description    String?  @db.Text
+  available      Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  bookings       Booking[]
+  reviews        Review[]
+
+  @@map("motorcycles")
+}
+
+model Booking {
+  id           Int           @id @default(autoincrement())
+  userId       Int           @map("user_id")
+  motorcycleId Int           @map("motorcycle_id")
+  startDate    DateTime      @map("start_date")
+  endDate      DateTime      @map("end_date")
+  status       BookingStatus @default(PENDING)
+  totalPrice   Decimal       @map("total_price") @db.Decimal(10, 2)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  motorcycle   Motorcycle    @relation(fields: [motorcycleId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model Review {
+  id           Int        @id @default(autoincrement())
+  userId       Int        @map("user_id")
+  motorcycleId Int        @map("motorcycle_id")
+  rating       Int        // 1-5 stars
+  comment      String?    @db.Text
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  motorcycle   Motorcycle @relation(fields: [motorcycleId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+}

@@ -1,0 +1,529 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Motorcycle Rental & Catalog API 🏍️",
+    "version": "1.0.0",
+    "description": "API REST robusta en Node.js y TypeScript para la gestión de catálogo de motocicletas, reservas con validación de fechas, opiniones de usuarios y autenticación basada en JWT."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor de Desarrollo Local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticación",
+      "description": "Endpoints de registro, login y perfil de usuario con JWT"
+    },
+    {
+      "name": "Motocicletas",
+      "description": "Gestión del catálogo de motos, filtros de búsqueda y detalles"
+    },
+    {
+      "name": "Reservas",
+      "description": "Flujo de reservas con control de disponibilidad y cálculo de precio"
+    },
+    {
+      "name": "Opiniones",
+      "description": "Calificaciones de 1 a 5 estrellas y comentarios por motocicleta"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Ingresa tu token JWT en formato: `Bearer <token>`"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Juan Pérez" },
+          "email": { "type": "string", "format": "email", "example": "juan@example.com" },
+          "role": { "type": "string", "enum": ["USER", "ADMIN"], "example": "USER" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Motorcycle": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "brand": { "type": "string", "example": "Yamaha" },
+          "model": { "type": "string", "example": "MT-07" },
+          "year": { "type": "integer", "example": 2024 },
+          "price": { "type": "number", "format": "float", "description": "Precio diario de alquiler", "example": 95.0 },
+          "engineCapacity": { "type": "integer", "description": "Cilindrada en cc", "example": 689 },
+          "imageUrl": { "type": "string", "format": "uri", "nullable": true, "example": "https://example.com/yamaha.jpg" },
+          "description": { "type": "string", "nullable": true, "example": "Una moto naked de peso medio." },
+          "available": { "type": "boolean", "default": true, "example": true }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "userId": { "type": "integer", "example": 2 },
+          "motorcycleId": { "type": "integer", "example": 1 },
+          "startDate": { "type": "string", "format": "date-time", "example": "2026-08-06T00:00:00Z" },
+          "endDate": { "type": "string", "format": "date-time", "example": "2026-08-10T00:00:00Z" },
+          "status": { "type": "string", "enum": ["PENDING", "APPROVED", "CANCELLED"], "example": "PENDING" },
+          "totalPrice": { "type": "number", "format": "float", "example": 380.0 }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "userId": { "type": "integer", "example": 2 },
+          "motorcycleId": { "type": "integer", "example": 1 },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 5, "example": 5 },
+          "comment": { "type": "string", "nullable": true, "example": "Excelente manejo y torque." }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Registrar un nuevo usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": { "type": "string", "example": "Juan Pérez" },
+                  "email": { "type": "string", "format": "email", "example": "juan@example.com" },
+                  "password": { "type": "string", "example": "password123" },
+                  "role": { "type": "string", "enum": ["USER", "ADMIN"], "default": "USER", "example": "USER" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "User registered successfully" },
+                    "token": { "type": "string", "example": "eyJhbGciOiJI..." },
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Datos de registro inválidos o email ya registrado" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Iniciar sesión de usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email", "example": "juan@example.com" },
+                  "password": { "type": "string", "example": "password123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Login successful" },
+                    "token": { "type": "string", "example": "eyJhbGciOiJI..." },
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Email o contraseña incorrectos" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["Autenticación"],
+        "summary": "Obtener perfil del usuario autenticado",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Detalles del perfil obtenidos exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "No autorizado (Falta token o es inválido)" }
+        }
+      }
+    },
+    "/api/motorcycles": {
+      "get": {
+        "tags": ["Motocicletas"],
+        "summary": "Listar motocicletas con filtros de búsqueda",
+        "parameters": [
+          { "name": "brand", "in": "query", "description": "Filtrar por marca", "required": false, "schema": { "type": "string" } },
+          { "name": "year", "in": "query", "description": "Filtrar por año", "required": false, "schema": { "type": "integer" } },
+          { "name": "available", "in": "query", "description": "Filtrar por disponibilidad ('true' o 'false')", "required": false, "schema": { "type": "string" } },
+          { "name": "minPrice", "in": "query", "description": "Precio diario mínimo", "required": false, "schema": { "type": "number" } },
+          { "name": "maxPrice", "in": "query", "description": "Precio diario máximo", "required": false, "schema": { "type": "number" } },
+          { "name": "search", "in": "query", "description": "Buscar en marca, modelo o descripción", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catálogo de motocicletas obtenido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Motorcycle" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Motocicletas"],
+        "summary": "Añadir una motocicleta al catálogo",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["brand", "model", "year", "price", "engineCapacity"],
+                "properties": {
+                  "brand": { "type": "string", "example": "Honda" },
+                  "model": { "type": "string", "example": "CBR 650R" },
+                  "year": { "type": "integer", "example": 2023 },
+                  "price": { "type": "number", "example": 110.0 },
+                  "engineCapacity": { "type": "integer", "example": 649 },
+                  "imageUrl": { "type": "string", "example": "https://example.com/honda.jpg" },
+                  "description": { "type": "string", "example": "Moto deportiva ágil y potente." },
+                  "available": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Motocicleta creada correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Motorcycle added successfully" },
+                    "motorcycle": { "$ref": "#/components/schemas/Motorcycle" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Campos requeridos faltantes" },
+          "403": { "description": "Permisos de Administrador requeridos" }
+        }
+      }
+    },
+    "/api/motorcycles/{id}": {
+      "get": {
+        "tags": ["Motocicletas"],
+        "summary": "Obtener detalles de una motocicleta específica por ID (incluye opiniones)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la motocicleta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/Motorcycle" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "reviews": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/Review" },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "user": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": { "type": "integer" },
+                                      "name": { "type": "string" }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": { "description": "Motocicleta no encontrada" }
+        }
+      },
+      "put": {
+        "tags": ["Motocicletas"],
+        "summary": "Actualizar detalles de una motocicleta",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "brand": { "type": "string" },
+                  "model": { "type": "string" },
+                  "year": { "type": "integer" },
+                  "price": { "type": "number" },
+                  "engineCapacity": { "type": "integer" },
+                  "imageUrl": { "type": "string" },
+                  "description": { "type": "string" },
+                  "available": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Motocicleta actualizada exitosamente" },
+          "404": { "description": "Motocicleta no encontrada" },
+          "403": { "description": "Permisos de Administrador requeridos" }
+        }
+      },
+      "delete": {
+        "tags": ["Motocicletas"],
+        "summary": "Eliminar una motocicleta del catálogo",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Motocicleta eliminada del catálogo" },
+          "404": { "description": "Motocicleta no encontrada" },
+          "403": { "description": "Permisos de Administrador requeridos" }
+        }
+      }
+    },
+    "/api/bookings": {
+      "get": {
+        "tags": ["Reservas"],
+        "summary": "Listar reservas (Admins ven todas, usuarios solo las suyas)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "status", "in": "query", "description": "Filtrar por estado (PENDING, APPROVED, CANCELLED)", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de reservas obtenida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Booking" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Reservas"],
+        "summary": "Registrar una nueva reserva de motocicleta",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["motorcycleId", "startDate", "endDate"],
+                "properties": {
+                  "motorcycleId": { "type": "integer", "example": 1 },
+                  "startDate": { "type": "string", "format": "date-time", "example": "2026-08-06T00:00:00Z" },
+                  "endDate": { "type": "string", "format": "date-time", "example": "2026-08-10T00:00:00Z" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reserva creada exitosamente (estado PENDING)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Booking created successfully" },
+                    "booking": { "$ref": "#/components/schemas/Booking" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Error en fechas, disponibilidad o conflicto de reservas solapadas" },
+          "404": { "description": "Motocicleta no encontrada" }
+        }
+      }
+    },
+    "/api/bookings/{id}/status": {
+      "put": {
+        "tags": ["Reservas"],
+        "summary": "Actualizar el estado de una reserva (Ej: Aprobar o Cancelar)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PENDING", "APPROVED", "CANCELLED"], "example": "APPROVED" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Estado actualizado con éxito" },
+          "400": { "description": "Estado inválido" },
+          "403": { "description": "No autorizado (los usuarios comunes solo pueden cancelar)" },
+          "404": { "description": "Reserva no encontrada" }
+        }
+      }
+    },
+    "/api/bookings/{id}": {
+      "get": {
+        "tags": ["Reservas"],
+        "summary": "Obtener detalles de una reserva específica",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la reserva obtenidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "403": { "description": "Acceso denegado (la reserva pertenece a otro usuario)" },
+          "404": { "description": "Reserva no encontrada" }
+        }
+      },
+      "delete": {
+        "tags": ["Reservas"],
+        "summary": "Eliminar el registro de una reserva",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Reserva eliminada con éxito" },
+          "403": { "description": "Acceso denegado" },
+          "404": { "description": "Reserva no encontrada" }
+        }
+      }
+    },
+    "/api/reviews": {
+      "post": {
+        "tags": ["Opiniones"],
+        "summary": "Registrar una nueva opinión / comentario sobre una moto",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["motorcycleId", "rating"],
+                "properties": {
+                  "motorcycleId": { "type": "integer", "example": 1 },
+                  "rating": { "type": "integer", "minimum": 1, "maximum": 5, "description": "Puntuación de 1 a 5 estrellas", "example": 5 },
+                  "comment": { "type": "string", "example": "Excelente potencia, muy recomendada." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Opinión registrada con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Review submitted successfully" },
+                    "review": { "$ref": "#/components/schemas/Review" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Valor de puntuación fuera del rango 1-5" },
+          "404": { "description": "Motocicleta no encontrada" }
+        }
+      }
+    }
+  }
+}
