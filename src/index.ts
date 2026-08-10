@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.js";
 import motorcycleRoutes from "./routes/motorcycles.js";
 import bookingRoutes from "./routes/bookings.js";
 import reviewRoutes from "./routes/reviews.js";
+import chatRoutes from "./routes/chat.js";
 import swaggerDocument from "./swagger.json" with { type: "json" };
 import swaggerUi from "swagger-ui-express";
 
@@ -31,6 +32,7 @@ app.get("/", (req: Request, res: Response) => {
       motorcycles: "/api/motorcycles",
       bookings: "/api/bookings",
       reviews: "/api/reviews",
+      chat: "/api/chat",
     },
   });
 });
@@ -43,6 +45,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/motorcycles", motorcycleRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/chat", chatRoutes);
 
 // 404 Route handler
 app.use((req: Request, res: Response) => {
