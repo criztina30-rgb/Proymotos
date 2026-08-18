@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Motorcycle: 'Motorcycle',
+  Favorite: 'Favorite',
   Booking: 'Booking',
   Review: 'Review'
 } as const
@@ -95,12 +96,23 @@ export const MotorcycleScalarFieldEnum = {
   engineCapacity: 'engineCapacity',
   imageUrl: 'imageUrl',
   description: 'description',
+  category: 'category',
   available: 'available',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type MotorcycleScalarFieldEnum = (typeof MotorcycleScalarFieldEnum)[keyof typeof MotorcycleScalarFieldEnum]
+
+
+export const FavoriteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  motorcycleId: 'motorcycleId',
+  createdAt: 'createdAt'
+} as const
+
+export type FavoriteScalarFieldEnum = (typeof FavoriteScalarFieldEnum)[keyof typeof FavoriteScalarFieldEnum]
 
 
 export const BookingScalarFieldEnum = {

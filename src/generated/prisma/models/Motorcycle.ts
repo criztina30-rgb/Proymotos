@@ -49,6 +49,7 @@ export type MotorcycleMinAggregateOutputType = {
   engineCapacity: number | null
   imageUrl: string | null
   description: string | null
+  category: string | null
   available: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +64,7 @@ export type MotorcycleMaxAggregateOutputType = {
   engineCapacity: number | null
   imageUrl: string | null
   description: string | null
+  category: string | null
   available: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -77,6 +79,7 @@ export type MotorcycleCountAggregateOutputType = {
   engineCapacity: number
   imageUrl: number
   description: number
+  category: number
   available: number
   createdAt: number
   updatedAt: number
@@ -107,6 +110,7 @@ export type MotorcycleMinAggregateInputType = {
   engineCapacity?: true
   imageUrl?: true
   description?: true
+  category?: true
   available?: true
   createdAt?: true
   updatedAt?: true
@@ -121,6 +125,7 @@ export type MotorcycleMaxAggregateInputType = {
   engineCapacity?: true
   imageUrl?: true
   description?: true
+  category?: true
   available?: true
   createdAt?: true
   updatedAt?: true
@@ -135,6 +140,7 @@ export type MotorcycleCountAggregateInputType = {
   engineCapacity?: true
   imageUrl?: true
   description?: true
+  category?: true
   available?: true
   createdAt?: true
   updatedAt?: true
@@ -236,6 +242,7 @@ export type MotorcycleGroupByOutputType = {
   engineCapacity: number
   imageUrl: string | null
   description: string | null
+  category: string | null
   available: boolean
   createdAt: Date
   updatedAt: Date
@@ -273,11 +280,13 @@ export type MotorcycleWhereInput = {
   engineCapacity?: Prisma.IntFilter<"Motorcycle"> | number
   imageUrl?: Prisma.StringNullableFilter<"Motorcycle"> | string | null
   description?: Prisma.StringNullableFilter<"Motorcycle"> | string | null
+  category?: Prisma.StringNullableFilter<"Motorcycle"> | string | null
   available?: Prisma.BoolFilter<"Motorcycle"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Motorcycle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Motorcycle"> | Date | string
   bookings?: Prisma.BookingListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  favorites?: Prisma.FavoriteListRelationFilter
 }
 
 export type MotorcycleOrderByWithRelationInput = {
@@ -289,11 +298,13 @@ export type MotorcycleOrderByWithRelationInput = {
   engineCapacity?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   available?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   bookings?: Prisma.BookingOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
+  favorites?: Prisma.FavoriteOrderByRelationAggregateInput
 }
 
 export type MotorcycleWhereUniqueInput = Prisma.AtLeast<{
@@ -308,11 +319,13 @@ export type MotorcycleWhereUniqueInput = Prisma.AtLeast<{
   engineCapacity?: Prisma.IntFilter<"Motorcycle"> | number
   imageUrl?: Prisma.StringNullableFilter<"Motorcycle"> | string | null
   description?: Prisma.StringNullableFilter<"Motorcycle"> | string | null
+  category?: Prisma.StringNullableFilter<"Motorcycle"> | string | null
   available?: Prisma.BoolFilter<"Motorcycle"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Motorcycle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Motorcycle"> | Date | string
   bookings?: Prisma.BookingListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  favorites?: Prisma.FavoriteListRelationFilter
 }, "id">
 
 export type MotorcycleOrderByWithAggregationInput = {
@@ -324,6 +337,7 @@ export type MotorcycleOrderByWithAggregationInput = {
   engineCapacity?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   available?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -346,6 +360,7 @@ export type MotorcycleScalarWhereWithAggregatesInput = {
   engineCapacity?: Prisma.IntWithAggregatesFilter<"Motorcycle"> | number
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Motorcycle"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Motorcycle"> | string | null
+  category?: Prisma.StringNullableWithAggregatesFilter<"Motorcycle"> | string | null
   available?: Prisma.BoolWithAggregatesFilter<"Motorcycle"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Motorcycle"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Motorcycle"> | Date | string
@@ -359,11 +374,13 @@ export type MotorcycleCreateInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingCreateNestedManyWithoutMotorcycleInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutMotorcycleInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutMotorcycleInput
 }
 
 export type MotorcycleUncheckedCreateInput = {
@@ -375,11 +392,13 @@ export type MotorcycleUncheckedCreateInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutMotorcycleInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutMotorcycleInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutMotorcycleInput
 }
 
 export type MotorcycleUpdateInput = {
@@ -390,11 +409,13 @@ export type MotorcycleUpdateInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUpdateManyWithoutMotorcycleNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutMotorcycleNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutMotorcycleNestedInput
 }
 
 export type MotorcycleUncheckedUpdateInput = {
@@ -406,11 +427,13 @@ export type MotorcycleUncheckedUpdateInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutMotorcycleNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutMotorcycleNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutMotorcycleNestedInput
 }
 
 export type MotorcycleCreateManyInput = {
@@ -422,6 +445,7 @@ export type MotorcycleCreateManyInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -435,6 +459,7 @@ export type MotorcycleUpdateManyMutationInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -449,6 +474,7 @@ export type MotorcycleUncheckedUpdateManyInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -463,6 +489,7 @@ export type MotorcycleCountOrderByAggregateInput = {
   engineCapacity?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   available?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -484,6 +511,7 @@ export type MotorcycleMaxOrderByAggregateInput = {
   engineCapacity?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   available?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -498,6 +526,7 @@ export type MotorcycleMinOrderByAggregateInput = {
   engineCapacity?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   available?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -531,6 +560,20 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type MotorcycleCreateNestedOneWithoutFavoritesInput = {
+  create?: Prisma.XOR<Prisma.MotorcycleCreateWithoutFavoritesInput, Prisma.MotorcycleUncheckedCreateWithoutFavoritesInput>
+  connectOrCreate?: Prisma.MotorcycleCreateOrConnectWithoutFavoritesInput
+  connect?: Prisma.MotorcycleWhereUniqueInput
+}
+
+export type MotorcycleUpdateOneRequiredWithoutFavoritesNestedInput = {
+  create?: Prisma.XOR<Prisma.MotorcycleCreateWithoutFavoritesInput, Prisma.MotorcycleUncheckedCreateWithoutFavoritesInput>
+  connectOrCreate?: Prisma.MotorcycleCreateOrConnectWithoutFavoritesInput
+  upsert?: Prisma.MotorcycleUpsertWithoutFavoritesInput
+  connect?: Prisma.MotorcycleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MotorcycleUpdateToOneWithWhereWithoutFavoritesInput, Prisma.MotorcycleUpdateWithoutFavoritesInput>, Prisma.MotorcycleUncheckedUpdateWithoutFavoritesInput>
+}
+
 export type MotorcycleCreateNestedOneWithoutBookingsInput = {
   create?: Prisma.XOR<Prisma.MotorcycleCreateWithoutBookingsInput, Prisma.MotorcycleUncheckedCreateWithoutBookingsInput>
   connectOrCreate?: Prisma.MotorcycleCreateOrConnectWithoutBookingsInput
@@ -559,6 +602,88 @@ export type MotorcycleUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MotorcycleUpdateToOneWithWhereWithoutReviewsInput, Prisma.MotorcycleUpdateWithoutReviewsInput>, Prisma.MotorcycleUncheckedUpdateWithoutReviewsInput>
 }
 
+export type MotorcycleCreateWithoutFavoritesInput = {
+  brand: string
+  model: string
+  year: number
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  engineCapacity: number
+  imageUrl?: string | null
+  description?: string | null
+  category?: string | null
+  available?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutMotorcycleInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutMotorcycleInput
+}
+
+export type MotorcycleUncheckedCreateWithoutFavoritesInput = {
+  id?: number
+  brand: string
+  model: string
+  year: number
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  engineCapacity: number
+  imageUrl?: string | null
+  description?: string | null
+  category?: string | null
+  available?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutMotorcycleInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutMotorcycleInput
+}
+
+export type MotorcycleCreateOrConnectWithoutFavoritesInput = {
+  where: Prisma.MotorcycleWhereUniqueInput
+  create: Prisma.XOR<Prisma.MotorcycleCreateWithoutFavoritesInput, Prisma.MotorcycleUncheckedCreateWithoutFavoritesInput>
+}
+
+export type MotorcycleUpsertWithoutFavoritesInput = {
+  update: Prisma.XOR<Prisma.MotorcycleUpdateWithoutFavoritesInput, Prisma.MotorcycleUncheckedUpdateWithoutFavoritesInput>
+  create: Prisma.XOR<Prisma.MotorcycleCreateWithoutFavoritesInput, Prisma.MotorcycleUncheckedCreateWithoutFavoritesInput>
+  where?: Prisma.MotorcycleWhereInput
+}
+
+export type MotorcycleUpdateToOneWithWhereWithoutFavoritesInput = {
+  where?: Prisma.MotorcycleWhereInput
+  data: Prisma.XOR<Prisma.MotorcycleUpdateWithoutFavoritesInput, Prisma.MotorcycleUncheckedUpdateWithoutFavoritesInput>
+}
+
+export type MotorcycleUpdateWithoutFavoritesInput = {
+  brand?: Prisma.StringFieldUpdateOperationsInput | string
+  model?: Prisma.StringFieldUpdateOperationsInput | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutMotorcycleNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutMotorcycleNestedInput
+}
+
+export type MotorcycleUncheckedUpdateWithoutFavoritesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  brand?: Prisma.StringFieldUpdateOperationsInput | string
+  model?: Prisma.StringFieldUpdateOperationsInput | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutMotorcycleNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutMotorcycleNestedInput
+}
+
 export type MotorcycleCreateWithoutBookingsInput = {
   brand: string
   model: string
@@ -567,10 +692,12 @@ export type MotorcycleCreateWithoutBookingsInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   reviews?: Prisma.ReviewCreateNestedManyWithoutMotorcycleInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutMotorcycleInput
 }
 
 export type MotorcycleUncheckedCreateWithoutBookingsInput = {
@@ -582,10 +709,12 @@ export type MotorcycleUncheckedCreateWithoutBookingsInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutMotorcycleInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutMotorcycleInput
 }
 
 export type MotorcycleCreateOrConnectWithoutBookingsInput = {
@@ -612,10 +741,12 @@ export type MotorcycleUpdateWithoutBookingsInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewUpdateManyWithoutMotorcycleNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutMotorcycleNestedInput
 }
 
 export type MotorcycleUncheckedUpdateWithoutBookingsInput = {
@@ -627,10 +758,12 @@ export type MotorcycleUncheckedUpdateWithoutBookingsInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutMotorcycleNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutMotorcycleNestedInput
 }
 
 export type MotorcycleCreateWithoutReviewsInput = {
@@ -641,10 +774,12 @@ export type MotorcycleCreateWithoutReviewsInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingCreateNestedManyWithoutMotorcycleInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutMotorcycleInput
 }
 
 export type MotorcycleUncheckedCreateWithoutReviewsInput = {
@@ -656,10 +791,12 @@ export type MotorcycleUncheckedCreateWithoutReviewsInput = {
   engineCapacity: number
   imageUrl?: string | null
   description?: string | null
+  category?: string | null
   available?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutMotorcycleInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutMotorcycleInput
 }
 
 export type MotorcycleCreateOrConnectWithoutReviewsInput = {
@@ -686,10 +823,12 @@ export type MotorcycleUpdateWithoutReviewsInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUpdateManyWithoutMotorcycleNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutMotorcycleNestedInput
 }
 
 export type MotorcycleUncheckedUpdateWithoutReviewsInput = {
@@ -701,10 +840,12 @@ export type MotorcycleUncheckedUpdateWithoutReviewsInput = {
   engineCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutMotorcycleNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutMotorcycleNestedInput
 }
 
 
@@ -715,11 +856,13 @@ export type MotorcycleUncheckedUpdateWithoutReviewsInput = {
 export type MotorcycleCountOutputType = {
   bookings: number
   reviews: number
+  favorites: number
 }
 
 export type MotorcycleCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bookings?: boolean | MotorcycleCountOutputTypeCountBookingsArgs
   reviews?: boolean | MotorcycleCountOutputTypeCountReviewsArgs
+  favorites?: boolean | MotorcycleCountOutputTypeCountFavoritesArgs
 }
 
 /**
@@ -746,6 +889,13 @@ export type MotorcycleCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.ReviewWhereInput
 }
 
+/**
+ * MotorcycleCountOutputType without action
+ */
+export type MotorcycleCountOutputTypeCountFavoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FavoriteWhereInput
+}
+
 
 export type MotorcycleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -756,11 +906,13 @@ export type MotorcycleSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   engineCapacity?: boolean
   imageUrl?: boolean
   description?: boolean
+  category?: boolean
   available?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bookings?: boolean | Prisma.Motorcycle$bookingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Motorcycle$reviewsArgs<ExtArgs>
+  favorites?: boolean | Prisma.Motorcycle$favoritesArgs<ExtArgs>
   _count?: boolean | Prisma.MotorcycleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["motorcycle"]>
 
@@ -773,6 +925,7 @@ export type MotorcycleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   engineCapacity?: boolean
   imageUrl?: boolean
   description?: boolean
+  category?: boolean
   available?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -787,6 +940,7 @@ export type MotorcycleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   engineCapacity?: boolean
   imageUrl?: boolean
   description?: boolean
+  category?: boolean
   available?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -801,15 +955,17 @@ export type MotorcycleSelectScalar = {
   engineCapacity?: boolean
   imageUrl?: boolean
   description?: boolean
+  category?: boolean
   available?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MotorcycleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "brand" | "model" | "year" | "price" | "engineCapacity" | "imageUrl" | "description" | "available" | "createdAt" | "updatedAt", ExtArgs["result"]["motorcycle"]>
+export type MotorcycleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "brand" | "model" | "year" | "price" | "engineCapacity" | "imageUrl" | "description" | "category" | "available" | "createdAt" | "updatedAt", ExtArgs["result"]["motorcycle"]>
 export type MotorcycleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bookings?: boolean | Prisma.Motorcycle$bookingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Motorcycle$reviewsArgs<ExtArgs>
+  favorites?: boolean | Prisma.Motorcycle$favoritesArgs<ExtArgs>
   _count?: boolean | Prisma.MotorcycleCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MotorcycleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -820,6 +976,7 @@ export type $MotorcyclePayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     bookings: Prisma.$BookingPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
+    favorites: Prisma.$FavoritePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -830,6 +987,7 @@ export type $MotorcyclePayload<ExtArgs extends runtime.Types.Extensions.Internal
     engineCapacity: number
     imageUrl: string | null
     description: string | null
+    category: string | null
     available: boolean
     createdAt: Date
     updatedAt: Date
@@ -1229,6 +1387,7 @@ export interface Prisma__MotorcycleClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bookings<T extends Prisma.Motorcycle$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Motorcycle$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.Motorcycle$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Motorcycle$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  favorites<T extends Prisma.Motorcycle$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Motorcycle$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1266,6 +1425,7 @@ export interface MotorcycleFieldRefs {
   readonly engineCapacity: Prisma.FieldRef<"Motorcycle", 'Int'>
   readonly imageUrl: Prisma.FieldRef<"Motorcycle", 'String'>
   readonly description: Prisma.FieldRef<"Motorcycle", 'String'>
+  readonly category: Prisma.FieldRef<"Motorcycle", 'String'>
   readonly available: Prisma.FieldRef<"Motorcycle", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Motorcycle", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Motorcycle", 'DateTime'>
@@ -1707,6 +1867,30 @@ export type Motorcycle$reviewsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+}
+
+/**
+ * Motorcycle.favorites
+ */
+export type Motorcycle$favoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Favorite
+   */
+  select?: Prisma.FavoriteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Favorite
+   */
+  omit?: Prisma.FavoriteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FavoriteInclude<ExtArgs> | null
+  where?: Prisma.FavoriteWhereInput
+  orderBy?: Prisma.FavoriteOrderByWithRelationInput | Prisma.FavoriteOrderByWithRelationInput[]
+  cursor?: Prisma.FavoriteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FavoriteScalarFieldEnum | Prisma.FavoriteScalarFieldEnum[]
 }
 
 /**

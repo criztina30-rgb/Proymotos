@@ -52,6 +52,11 @@ export type User = Prisma.UserModel
  */
 export type Motorcycle = Prisma.MotorcycleModel
 /**
+ * Model Favorite
+ * 
+ */
+export type Favorite = Prisma.FavoriteModel
+/**
  * Model Booking
  * 
  */
