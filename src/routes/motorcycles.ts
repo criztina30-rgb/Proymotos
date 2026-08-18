@@ -7,9 +7,13 @@ const router = Router();
 // GET /api/motorcycles - List with filters
 router.get("/", async (req: any, res: Response): Promise<void> => {
   try {
-    const { brand, year, available, minPrice, maxPrice, search } = req.query;
+    const { brand, year, available, minPrice, maxPrice, search, category } = req.query;
 
     const where: any = {};
+
+    if (category) {
+      where.category = { equals: category as string, mode: "insensitive" };
+    }
 
     if (brand) {
       where.brand = { contains: brand as string, mode: "insensitive" };
@@ -110,7 +114,7 @@ router.post(
   requireAdmin as any,
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const { brand, model, year, price, engineCapacity, imageUrl, description, available } = req.body;
+      const { brand, model, year, price, engineCapacity, imageUrl, description, available, category } = req.body;
 
       if (!brand || !model || !year || !price || !engineCapacity) {
         res.status(400).json({ error: "Brand, model, year, price, and engine capacity are required" });
@@ -126,6 +130,7 @@ router.post(
           engineCapacity: parseInt(engineCapacity, 10),
           imageUrl,
           description,
+          category,
           available: available !== undefined ? !!available : true,
         },
       });
@@ -154,7 +159,7 @@ router.put(
         return;
       }
 
-      const { brand, model, year, price, engineCapacity, imageUrl, description, available } = req.body;
+      const { brand, model, year, price, engineCapacity, imageUrl, description, available, category } = req.body;
 
       const existing = await prisma.motorcycle.findUnique({ where: { id } });
       if (!existing) {
@@ -172,6 +177,7 @@ router.put(
           engineCapacity: engineCapacity !== undefined ? parseInt(engineCapacity, 10) : existing.engineCapacity,
           imageUrl: imageUrl !== undefined ? imageUrl : existing.imageUrl,
           description: description !== undefined ? description : existing.description,
+          category: category !== undefined ? category : existing.category,
           available: available !== undefined ? !!available : existing.available,
         },
       });

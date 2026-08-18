@@ -27,6 +27,10 @@
     {
       "name": "Opiniones",
       "description": "Calificaciones de 1 a 5 estrellas y comentarios por motocicleta"
+    },
+    {
+      "name": "ChatBot 🤖",
+      "description": "Asistente inteligente MotoBot impulsado por OpenAI gpt-4.1-nano. Responde preguntas sobre el catálogo de motos en tiempo real."
     }
   ],
   "components": {
@@ -83,6 +87,45 @@
           "motorcycleId": { "type": "integer", "example": 1 },
           "rating": { "type": "integer", "minimum": 1, "maximum": 5, "example": 5 },
           "comment": { "type": "string", "nullable": true, "example": "Excelente manejo y torque." }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "properties": {
+          "role": { "type": "string", "enum": ["user", "assistant"], "example": "user" },
+          "content": { "type": "string", "example": "¿Qué motos Honda tienen disponibles?" }
+        }
+      },
+      "ChatRequest": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": { "type": "string", "example": "¿Cuáles son las motos más baratas disponibles?", "description": "Pregunta o mensaje al asistente MotoBot" },
+          "history": {
+            "type": "array",
+            "description": "Historial de conversación previo (máx. últimos 10 turnos)",
+            "items": { "$ref": "#/components/schemas/ChatMessage" },
+            "example": [
+              { "role": "user", "content": "Hola" },
+              { "role": "assistant", "content": "¡Hola! Soy MotoBot, ¿en qué te puedo ayudar?" }
+            ]
+          }
+        }
+      },
+      "ChatResponse": {
+        "type": "object",
+        "properties": {
+          "reply": { "type": "string", "example": "Tenemos varias motos Honda disponibles: la CBR 650R (2023) a $110/día con 649cc...", "description": "Respuesta generada por MotoBot" },
+          "model": { "type": "string", "example": "gpt-4.1-nano", "description": "Modelo de OpenAI utilizado" },
+          "usage": {
+            "type": "object",
+            "description": "Tokens consumidos en la solicitud",
+            "properties": {
+              "prompt_tokens": { "type": "integer", "example": 320 },
+              "completion_tokens": { "type": "integer", "example": 95 },
+              "total_tokens": { "type": "integer", "example": 415 }
+            }
+          }
         }
       }
     }
@@ -522,6 +565,125 @@
           },
           "400": { "description": "Valor de puntuación fuera del rango 1-5" },
           "404": { "description": "Motocicleta no encontrada" }
+        }
+      }
+    },
+    "/api/chat": {
+      "post": {
+        "tags": ["ChatBot 🤖"],
+        "summary": "Enviar un mensaje a MotoBot",
+        "description": "Envía una pregunta al asistente MotoBot. El bot carga automáticamente el catálogo completo de motos de la base de datos y responde con información actualizada. Soporta conversación multi-turno a través del campo `history`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChatRequest" },
+              "examples": {
+                "consulta_simple": {
+                  "summary": "Consulta simple sin historial",
+                  "value": { "message": "¿Qué motos tienen disponibles?" }
+                },
+                "consulta_con_historial": {
+                  "summary": "Consulta con historial de conversación",
+                  "value": {
+                    "message": "¿Y cuál de esas es la más barata?",
+                    "history": [
+                      { "role": "user", "content": "¿Qué motos Yamaha tienen?" },
+                      { "role": "assistant", "content": "Tenemos la Yamaha MT-07 (2024) a $95/día y la Yamaha R1 (2023) a $150/día." }
+                    ]
+                  }
+                },
+                "recomendacion": {
+                  "summary": "Pedir recomendación",
+                  "value": { "message": "Recomiéndame una moto para ciudad, económica y disponible" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Respuesta exitosa de MotoBot",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "El campo 'message' es requerido o está vacío",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string", "example": "El campo 'message' es requerido y no puede estar vacío." }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de solicitudes de OpenAI alcanzado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string", "example": "Límite de solicitudes de OpenAI alcanzado. Intenta en unos momentos." }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Error interno del servidor o API Key inválida" }
+        }
+      }
+    },
+    "/api/chat/motorcycles-context": {
+      "get": {
+        "tags": ["ChatBot 🤖"],
+        "summary": "Obtener catálogo de motos con reseñas (contexto del bot)",
+        "description": "Devuelve todas las motocicletas con sus reseñas y estadísticas. Este es el mismo contexto que MotoBot usa internamente para responder consultas.",
+        "responses": {
+          "200": {
+            "description": "Catálogo completo con datos de reseñas y reservas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/Motorcycle" },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "reviews": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rating": { "type": "integer", "example": 5 },
+                                "comment": { "type": "string", "nullable": true, "example": "Excelente manejo" }
+                              }
+                            }
+                          },
+                          "_count": {
+                            "type": "object",
+                            "properties": {
+                              "bookings": { "type": "integer", "example": 3 },
+                              "reviews": { "type": "integer", "example": 2 }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Error interno del servidor" }
         }
       }
     }
